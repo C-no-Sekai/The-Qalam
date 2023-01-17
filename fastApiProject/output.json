@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html data-oe-company-name="NUST Campus Management Solution" data-website-id="1" lang="en-US">
+ <body class="bg-nust">
+  <div class="" id="wrapwrap">
+   <main>
+    <div class="container-fluid">
+     <div class="row m-3">
+      <div class="col-md-4 rounded my-3 p-2 shadow mx-auto bg-white mt-4" style="border-radius: 0.5rem !important;">
+       <div class="text-center">
+        <img alt="Qalam-logo" src="/odoocms_assets/static/img/sys.svg" style="color: #6c757d !important;"/>
+        <p class="text-center text-muted">
+         Campus Management Solution
+        </p>
+       </div>
+       <form action="/web/login" class="p-2 oe_login_form custom-login" method="post" onsubmit="this.action = this.action + location.hash" role="form" style="margin: 25px auto;">
+        <input name="csrf_token" type="hidden" value="704da9bd862277f48e67743dd5fb16dd0d404fe9o1673995876"/>
+        <div class="form-group field-login">
+         <input autocapitalize="off" autofocus="autofocus" class="form-control bg-light rounded py-2" id="login" name="login" placeholder="Login ID" required="required" type="text"/>
+        </div>
+        <div class="form-group field-password">
+         <input autocomplete="current-password" class="form-control mt-2 bg-light rounded py-2" id="password" maxlength="4096" name="password" placeholder="Password" required="required" type="password"/>
+        </div>
+        <button class="btn btn-nust btn-block py-3 mt-4" type="submit">
+         Log in
+        </button>
+        <div class="justify-content-between mt-2 d-flex small">
+         <a href="/web/reset_password">
+          Reset Password
+         </a>
+        </div>
+        <input name="redirect" type="hidden" value="/web?"/>
+        <input name="as_sfid" type="hidden" value="AAAAAAU17AnErOiWFc4Y1JzXX4oJeM8RteCRCKbcHbIMcZXrvYR1HRhBcs2o7syFhznLj2_RXOGezzOKHPetuIeaB6sHjRJaq3eAhc4qg2kgfZb0WvO96FAAi9FLx7ITHW2h1aFN9AEIhnpvDQNeB3F2jJPcXs2VPVSzDyv6DnY0D1wlhQ=="/>
+        <input name="as_fid" type="hidden" value="1faa340855cadaa63ae6acc8afede5f5f12bc471"/>
+       </form>
+      </div>
+    </div>
+   </main>
+  </div>
+ </body>
+</html>
