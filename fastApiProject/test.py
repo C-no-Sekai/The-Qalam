@@ -1,12 +1,14 @@
 import re
+import json
 import requests
 from bs4 import BeautifulSoup
+from concurrent.futures import ThreadPoolExecutor
 
 
 class Scrape:
     def __init__(self, username, password):
         self.url_base, self.url_login, self.url_aggregate, self.url_result = (
-            "https://qalam.nust.edu.pk/",
+            "https://qalam.nust.edu.pk",
             "https://qalam.nust.edu.pk/web/login",
             "https://qalam.nust.edu.pk/student/dashboard",
             "https://qalam.nust.edu.pk/student/results/id/"
@@ -45,7 +47,10 @@ class Scrape:
         r = self.session.get(url)
         soup = BeautifulSoup(r.content, "html.parser")
         table = soup.findAll("table", {"class": "uk-table uk-table-nowrap uk-table-align-vertical table_tree"})
-        table = str(table[0]) + str(table[1])
+        if len(table) == 1:
+            table = str(table[0])
+        if len(table) == 2:
+            table = str(table[0]) + str(table[1])
         table = BeautifulSoup(table, "html.parser")
         data = {}
         temp = []
@@ -77,12 +82,25 @@ class Scrape:
             data[ke] = temp_test
         return data
 
+    def result_all(self):
+        data = self.dashboard()
+        list_of_urls = []
+        for ke, val in data.items():
+            list_of_urls.append(val[0])
+        with ThreadPoolExecutor() as executor:
+            results = executor.map(self.result, list_of_urls)
+        for i, j in zip(data.values(), results):
+            i.append(j)
+            i.pop(0)
+        return data
+
 
 def data_function():
-    scraper = Scrape("madeel.bscs21seecs", "Student.123")
+    scraper = Scrape("aaleem.bscs21seecs", "Student.123")
     scraper.auth()
-    print(scraper.dashboard())
+    with open("output.json", "w") as f:
+        json.dump(scraper.result_all(), f, indent=4)
 
 
 if __name__ == "__main__":
-    print(data_function())
+    data_function()
