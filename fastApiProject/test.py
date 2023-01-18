@@ -98,8 +98,10 @@ class Scrape:
 def data_function():
     scraper = Scrape("aaleem.bscs21seecs", "Student.123")
     scraper.auth()
+    x = scraper.result_all()
     with open("output.json", "w") as f:
-        json.dump(scraper.result_all(), f, indent=4)
+        json.dump(x, f, indent=4)
+    return {"data": x}
 
 
 if __name__ == "__main__":
