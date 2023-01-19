@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Aggregates</title>
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="aggregates.css">
+        <script src="aggregates.js"></script>
+    </head>
+    <body onload="get_terms()">
+        <div class="welcome_message">
+            <span id="custom_message">Welcome XYZ!</span>
+        </div>
+        <div class="term_selection">
+            <!-- Will use radio buttons for available terms fetched again via API -->
+            <ul id="terms">
+            </ul>
+        </div>
+        <div class="term_table">
+            <!-- Display Subjects Taken, Breakdown, Total Students, Final Grade, Predicted Grade, Confidence Interval -->
+            <table id="grade_table">
+                <thead>
+                    <tr>
+                        <th>
+                            Subject Name
+                        </th>
+                        <th>
+                            Quiz %
+                        </th>
+                        <th>
+                            Assignment %
+                        </th>
+                        <th>
+                            Lab %
+                        </th>
+                        <th>
+                            Project %
+                        </th>
+                        <th>
+                            OHT %
+                        </th>
+                        <th>
+                            Final %
+                        </th>
+                        <th>
+                            Aggregate
+                        </th>
+                        <th>
+                            known Students
+                        </th>
+                        <th>
+                            Predicted Grade
+                        </th>
+                        <th>
+                            Grade Drops
+                        </th>
+                        <th>
+                            Grade Rises
+                        </th>
+                        <th>
+                            Actual Grade
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="table_body">
+
+                </tbody>
+            </table>
+        </div>
+        <div class="trend">
+            
+        </div>
+        <div class="refresh">
+
+        </div>
+
+        <!-- Create the footer -->
+        <div class="footer">
+            <p>COPYRIGHT 2023 and well bla bla bla </p>
+        </div>
+
+    </body>
+    
+</html>
