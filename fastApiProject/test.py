@@ -98,11 +98,32 @@ class Scrape:
 def data_function():
     scraper = Scrape("aaleem.bscs21seecs", "Student.123")
     scraper.auth()
-    x = scraper.result_all()
-    with open("output.json", "w") as f:
-        json.dump(x, f, indent=4)
-    return {"data": x}
+    data = scraper.result_all()
+    for course in data:
+        obtained_marks_total = 0
+        class_avg_total = 0
+        marks_total = 0
+        tests_count = 0
+        for category, values in data[course][2].items():
+            for subcategory, subvalues in values.items():
+                marks_total += float(subvalues["maxMark"])
+                obtained_marks_total += float(subvalues["obtained"])
+                class_avg_total += float(subvalues["classAvg"])
+                tests_count += 1
+                data[course][2][category][subcategory] = [
+                    (float(subvalues["obtained"]) / float(subvalues["maxMark"])) * 100,
+                    (float(subvalues["classAvg"]) / float(subvalues["maxMark"])) * 100
+                ]
+        for category, values in data[course][2].items():
+            temp = [0, 0]
+            templen = len(values)
+            for subvalues in values.values():
+                temp[0] += subvalues[0]
+                temp[1] += subvalues[1]
+            data[course][2][category] = [temp[0] / templen, temp[1] / templen]
+    return {"data": data}
 
 
 if __name__ == "__main__":
-    data_function()
+    with open("output.json", "w") as f:
+        json.dump(data_function(), f, indent=4)

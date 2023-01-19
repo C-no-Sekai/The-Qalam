@@ -1,633 +1,134 @@
 {
-    "Database Systems": [
-        "4.0",
-        "CS-220",
-        {
-            "One Hour Test/Mid Term": {
-                "OHT": {
-                    "maxMark": "75.0",
-                    "obtained": "56.25",
-                    "classAvg": "55.59",
-                    "percentage": "75.00"
-                }
-            },
-            "Assignment": {
-                "Assignment02": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "8.08",
-                    "percentage": "80.00"
-                },
-                "Assignment01": {
-                    "maxMark": "10.0",
-                    "obtained": "7.00",
-                    "classAvg": "7.60",
-                    "percentage": "70.00"
-                },
-                "Assignment03": {
-                    "maxMark": "10.0",
-                    "obtained": "7.00",
-                    "classAvg": "7.80",
-                    "percentage": "70.00"
-                }
-            },
-            "Quiz": {
-                "Quiz04": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "5.55",
-                    "percentage": "80.00"
-                },
-                "Quiz05": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "7.50",
-                    "percentage": "100.00"
-                },
-                "Quiz01": {
-                    "maxMark": "10.0",
-                    "obtained": "0.00",
-                    "classAvg": "5.68",
-                    "percentage": "0.00"
-                },
-                "Quiz02": {
-                    "maxMark": "10.0",
-                    "obtained": "0.00",
-                    "classAvg": "6.95",
-                    "percentage": "0.00"
-                },
-                "Quiz03": {
-                    "maxMark": "10.0",
-                    "obtained": "5.00",
-                    "classAvg": "5.53",
-                    "percentage": "50.00"
-                }
-            },
-            "Final": {
-                "Final": {
-                    "maxMark": "100.0",
-                    "obtained": "0.00",
-                    "classAvg": "0.00",
-                    "percentage": "0.00"
-                }
-            },
-            "Lab Work": {
-                "Lab11": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "9.75",
-                    "percentage": "100.00"
-                },
-                "Lab02": {
-                    "maxMark": "10.0",
-                    "obtained": "5.00",
-                    "classAvg": "9.50",
-                    "percentage": "50.00"
-                },
-                "Lab03": {
-                    "maxMark": "10.0",
-                    "obtained": "5.00",
-                    "classAvg": "9.50",
-                    "percentage": "50.00"
-                },
-                "Lab12": {
-                    "maxMark": "10.0",
-                    "obtained": "5.00",
-                    "classAvg": "9.01",
-                    "percentage": "50.00"
-                },
-                "Lab04": {
-                    "maxMark": "10.0",
-                    "obtained": "9.00",
-                    "classAvg": "9.25",
-                    "percentage": "90.00"
-                },
-                "Lab10": {
-                    "maxMark": "10.0",
-                    "obtained": "9.00",
-                    "classAvg": "8.55",
-                    "percentage": "90.00"
-                },
-                "Lab08": {
-                    "maxMark": "10.0",
-                    "obtained": "9.50",
-                    "classAvg": "9.66",
-                    "percentage": "95.00"
-                },
-                "Lab09": {
-                    "maxMark": "10.0",
-                    "obtained": "9.50",
-                    "classAvg": "9.66",
-                    "percentage": "95.00"
-                },
-                "Lab05": {
-                    "maxMark": "10.0",
-                    "obtained": "8.50",
-                    "classAvg": "9.14",
-                    "percentage": "85.00"
-                },
-                "Lab06": {
-                    "maxMark": "10.0",
-                    "obtained": "8.50",
-                    "classAvg": "9.01",
-                    "percentage": "85.00"
-                },
-                "Lab07": {
-                    "maxMark": "10.0",
-                    "obtained": "8.50",
-                    "classAvg": "9.19",
-                    "percentage": "85.00"
-                },
-                "Lab01": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "9.75",
-                    "percentage": "100.00"
-                }
+    "data": {
+        "Database Systems": [
+            "4.0",
+            "CS-220",
+            {
+                "One Hour Test/Mid Term": [
+                    75.0,
+                    74.12
+                ],
+                "Assignment": [
+                    73.33333333333333,
+                    78.26666666666667
+                ],
+                "Quiz": [
+                    46.0,
+                    62.42
+                ],
+                "Final": [
+                    0.0,
+                    0.0
+                ],
+                "Lab Work": [
+                    81.25,
+                    93.30833333333334
+                ]
             }
-        }
-    ],
-    "Computer Organisation & Assembly Language": [
-        "4.0",
-        "CS-235",
-        {
-            "One Hour Test/Mid Term": {
-                "MSE": {
-                    "maxMark": "50.0",
-                    "obtained": "31.00",
-                    "classAvg": "30.25",
-                    "percentage": "62.00"
-                }
-            },
-            "Assignment": {
-                "Assignment2": {
-                    "maxMark": "10.0",
-                    "obtained": "7.00",
-                    "classAvg": "8.40",
-                    "percentage": "70.00"
-                },
-                "Assignment1": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "8.93",
-                    "percentage": "80.00"
-                },
-                "Assignment3": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "9.13",
-                    "percentage": "80.00"
-                }
-            },
-            "Quiz": {
-                "Quiz5": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "7.75",
-                    "percentage": "100.00"
-                },
-                "Quiz2": {
-                    "maxMark": "10.0",
-                    "obtained": "3.00",
-                    "classAvg": "7.95",
-                    "percentage": "30.00"
-                },
-                "Quiz1": {
-                    "maxMark": "10.0",
-                    "obtained": "0.00",
-                    "classAvg": "2.68",
-                    "percentage": "0.00"
-                },
-                "Quiz4": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "6.23",
-                    "percentage": "100.00"
-                },
-                "Quiz3": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "5.13",
-                    "percentage": "80.00"
-                }
-            },
-            "Final": {
-                "Final": {
-                    "maxMark": "100.0",
-                    "obtained": "89.00",
-                    "classAvg": "61.50",
-                    "percentage": "89.00"
-                }
-            },
-            "Lab Work": {
-                "Lab1": {
-                    "maxMark": "25.0",
-                    "obtained": "25.00",
-                    "classAvg": "24.00",
-                    "percentage": "100.00"
-                },
-                "Lab4": {
-                    "maxMark": "25.0",
-                    "obtained": "10.00",
-                    "classAvg": "22.53",
-                    "percentage": "40.00"
-                },
-                "Lab12": {
-                    "maxMark": "25.0",
-                    "obtained": "20.00",
-                    "classAvg": "19.85",
-                    "percentage": "80.00"
-                },
-                "Lab6": {
-                    "maxMark": "25.0",
-                    "obtained": "25.00",
-                    "classAvg": "22.48",
-                    "percentage": "100.00"
-                },
-                "Lab10": {
-                    "maxMark": "70.0",
-                    "obtained": "25.00",
-                    "classAvg": "23.58",
-                    "percentage": "35.71"
-                },
-                "Lab2": {
-                    "maxMark": "25.0",
-                    "obtained": "21.00",
-                    "classAvg": "24.50",
-                    "percentage": "84.00"
-                },
-                "Lab7": {
-                    "maxMark": "25.0",
-                    "obtained": "23.00",
-                    "classAvg": "21.80",
-                    "percentage": "92.00"
-                },
-                "Lab8": {
-                    "maxMark": "25.0",
-                    "obtained": "23.00",
-                    "classAvg": "15.35",
-                    "percentage": "92.00"
-                },
-                "Lab3": {
-                    "maxMark": "25.0",
-                    "obtained": "17.00",
-                    "classAvg": "21.78",
-                    "percentage": "68.00"
-                },
-                "Lab5": {
-                    "maxMark": "25.0",
-                    "obtained": "23.00",
-                    "classAvg": "21.55",
-                    "percentage": "92.00"
-                },
-                "Lab9": {
-                    "maxMark": "25.0",
-                    "obtained": "20.00",
-                    "classAvg": "22.55",
-                    "percentage": "80.00"
-                },
-                "Lab11": {
-                    "maxMark": "25.0",
-                    "obtained": "9.00",
-                    "classAvg": "22.00",
-                    "percentage": "36.00"
-                }
-            },
-            "Final Lab": {
-                "LabExam": {
-                    "maxMark": "30.0",
-                    "obtained": "20.00",
-                    "classAvg": "14.95",
-                    "percentage": "66.67"
-                }
+        ],
+        "Computer Organisation & Assembly Language": [
+            "4.0",
+            "CS-235",
+            {
+                "One Hour Test/Mid Term": [
+                    62.0,
+                    60.5
+                ],
+                "Assignment": [
+                    76.66666666666667,
+                    88.2
+                ],
+                "Quiz": [
+                    62.0,
+                    59.480000000000004
+                ],
+                "Final": [
+                    89.0,
+                    61.5
+                ],
+                "Lab Work": [
+                    74.97619047619048,
+                    82.2704761904762
+                ],
+                "Final Lab": [
+                    66.66666666666666,
+                    49.83333333333333
+                ]
             }
-        }
-    ],
-    "Data Structures and Algorithms": [
-        "4.0",
-        "CS-250",
-        {
-            "One Hour Test/Mid Term": {
-                "MSEs": {
-                    "maxMark": "75.0",
-                    "obtained": "56.50",
-                    "classAvg": "47.63",
-                    "percentage": "75.33"
-                }
-            },
-            "Assignment": {
-                "Assignment3": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "8.67",
-                    "percentage": "80.00"
-                },
-                "Assignment1": {
-                    "maxMark": "10.0",
-                    "obtained": "4.80",
-                    "classAvg": "5.99",
-                    "percentage": "48.00"
-                },
-                "Assignment4": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "7.76",
-                    "percentage": "80.00"
-                },
-                "Assignment2": {
-                    "maxMark": "10.0",
-                    "obtained": "9.00",
-                    "classAvg": "8.87",
-                    "percentage": "90.00"
-                }
-            },
-            "Quiz": {
-                "Quiz2": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "7.05",
-                    "percentage": "100.00"
-                },
-                "Quiz4": {
-                    "maxMark": "10.0",
-                    "obtained": "9.00",
-                    "classAvg": "6.73",
-                    "percentage": "90.00"
-                },
-                "Quiz3": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "6.96",
-                    "percentage": "100.00"
-                },
-                "Quiz5": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "5.10",
-                    "percentage": "100.00"
-                },
-                "Quiz1": {
-                    "maxMark": "10.0",
-                    "obtained": "0.00",
-                    "classAvg": "4.27",
-                    "percentage": "0.00"
-                }
-            },
-            "Final": {
-                "Final": {
-                    "maxMark": "100.0",
-                    "obtained": "0.00",
-                    "classAvg": "0.00",
-                    "percentage": "0.00"
-                }
-            },
-            "Lab Work": {
-                "Lab7": {
-                    "maxMark": "10.0",
-                    "obtained": "7.00",
-                    "classAvg": "7.78",
-                    "percentage": "70.00"
-                },
-                "Lab12": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "8.95",
-                    "percentage": "100.00"
-                },
-                "Lab1": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "8.88",
-                    "percentage": "100.00"
-                },
-                "Lab2": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "8.73",
-                    "percentage": "100.00"
-                },
-                "Lab8": {
-                    "maxMark": "10.0",
-                    "obtained": "5.00",
-                    "classAvg": "7.20",
-                    "percentage": "50.00"
-                },
-                "Lab9": {
-                    "maxMark": "10.0",
-                    "obtained": "7.00",
-                    "classAvg": "7.76",
-                    "percentage": "70.00"
-                },
-                "Lab4": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "8.59",
-                    "percentage": "80.00"
-                },
-                "Lab5": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "8.37",
-                    "percentage": "80.00"
-                },
-                "Lab6": {
-                    "maxMark": "10.0",
-                    "obtained": "8.00",
-                    "classAvg": "8.41",
-                    "percentage": "80.00"
-                },
-                "Lab3": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "8.88",
-                    "percentage": "100.00"
-                },
-                "Lab11": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "9.24",
-                    "percentage": "100.00"
-                },
-                "Lab10": {
-                    "maxMark": "10.0",
-                    "obtained": "9.00",
-                    "classAvg": "9.20",
-                    "percentage": "90.00"
-                },
-                "Lab13": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "8.71",
-                    "percentage": "100.00"
-                }
-            },
-            "Final Lab": {
-                "Project": {
-                    "maxMark": "20.0",
-                    "obtained": "16.00",
-                    "classAvg": "17.34",
-                    "percentage": "80.00"
-                }
+        ],
+        "Data Structures and Algorithms": [
+            "4.0",
+            "CS-250",
+            {
+                "One Hour Test/Mid Term": [
+                    75.33333333333333,
+                    63.50666666666667
+                ],
+                "Assignment": [
+                    74.5,
+                    78.225
+                ],
+                "Quiz": [
+                    78.0,
+                    60.220000000000006
+                ],
+                "Final": [
+                    0.0,
+                    0.0
+                ],
+                "Lab Work": [
+                    86.15384615384616,
+                    85.15384615384616
+                ],
+                "Final Lab": [
+                    80.0,
+                    86.7
+                ]
             }
-        }
-    ],
-    "Technical & Business Writing": [
-        "2.0",
-        "HU-212",
-        {
-            "One Hour Test/Mid Term": {
-                "CLO1": {
-                    "maxMark": "35.0",
-                    "obtained": "21.50",
-                    "classAvg": "26.35",
-                    "percentage": "61.43"
-                },
-                "MidTerm": {
-                    "maxMark": "60.0",
-                    "obtained": "31.50",
-                    "classAvg": "45.16",
-                    "percentage": "52.50"
-                },
-                "CLO2": {
-                    "maxMark": "10.0",
-                    "obtained": "7.00",
-                    "classAvg": "8.10",
-                    "percentage": "70.00"
-                },
-                "CLO3": {
-                    "maxMark": "15.0",
-                    "obtained": "3.00",
-                    "classAvg": "10.68",
-                    "percentage": "20.00"
-                }
-            },
-            "Assignment": {
-                "TechnicalWriting": {
-                    "maxMark": "10.0",
-                    "obtained": "4.00",
-                    "classAvg": "7.14",
-                    "percentage": "40.00"
-                },
-                "ReportWriting": {
-                    "maxMark": "10.0",
-                    "obtained": "8.75",
-                    "classAvg": "8.23",
-                    "percentage": "87.50"
-                }
-            },
-            "Quiz": {
-                "Quiz": {
-                    "maxMark": "10.0",
-                    "obtained": "5.00",
-                    "classAvg": "6.73",
-                    "percentage": "50.00"
-                },
-                "Quiz2": {
-                    "maxMark": "10.0",
-                    "obtained": "6.50",
-                    "classAvg": "7.30",
-                    "percentage": "65.00"
-                }
-            },
-            "Final": {
-                "FinalTerm": {
-                    "maxMark": "100.0",
-                    "obtained": "64.75",
-                    "classAvg": "77.14",
-                    "percentage": "64.75"
-                },
-                "Final": {
-                    "maxMark": "100.0",
-                    "obtained": "0.00",
-                    "classAvg": "0.00",
-                    "percentage": "0.00"
-                },
-                "CLO2": {
-                    "maxMark": "20.0",
-                    "obtained": "14.00",
-                    "classAvg": "16.35",
-                    "percentage": "70.00"
-                },
-                "CLO3": {
-                    "maxMark": "60.0",
-                    "obtained": "35.75",
-                    "classAvg": "45.46",
-                    "percentage": "59.58"
-                },
-                "CLO1": {
-                    "maxMark": "20.0",
-                    "obtained": "15.00",
-                    "classAvg": "15.75",
-                    "percentage": "75.00"
-                }
+        ],
+        "Technical & Business Writing": [
+            "2.0",
+            "HU-212",
+            {
+                "One Hour Test/Mid Term": [
+                    52.5,
+                    75.26666666666667
+                ],
+                "Assignment": [
+                    63.75,
+                    76.85
+                ],
+                "Quiz": [
+                    57.5,
+                    65.60000000000001
+                ],
+                "Final": [
+                    64.75,
+                    77.14
+                ]
             }
-        }
-    ],
-    "Linear Algebra": [
-        "3.0",
-        "MATH-222",
-        {
-            "Quiz": {
-                "QuizNo.3": {
-                    "maxMark": "10.0",
-                    "obtained": "10.00",
-                    "classAvg": "7.44",
-                    "percentage": "100.00"
-                },
-                "QuizNo.1": {
-                    "maxMark": "10.0",
-                    "obtained": "1.00",
-                    "classAvg": "6.45",
-                    "percentage": "10.00"
-                },
-                "QuizNo.2": {
-                    "maxMark": "10.0",
-                    "obtained": "1.00",
-                    "classAvg": "5.81",
-                    "percentage": "10.00"
-                },
-                "QuizNo.4": {
-                    "maxMark": "10.0",
-                    "obtained": "3.00",
-                    "classAvg": "5.00",
-                    "percentage": "30.00"
-                },
-                "QuizNo.5": {
-                    "maxMark": "10.0",
-                    "obtained": "5.00",
-                    "classAvg": "3.34",
-                    "percentage": "50.00"
-                }
-            },
-            "Assignment": {
-                "AssignmentNo.2": {
-                    "maxMark": "10.0",
-                    "obtained": "7.75",
-                    "classAvg": "8.14",
-                    "percentage": "77.50"
-                },
-                "AssignmentNo.3": {
-                    "maxMark": "10.0",
-                    "obtained": "6.50",
-                    "classAvg": "6.63",
-                    "percentage": "65.00"
-                },
-                "AssignmentNo.1": {
-                    "maxMark": "10.0",
-                    "obtained": "8.50",
-                    "classAvg": "8.71",
-                    "percentage": "85.00"
-                }
-            },
-            "One Hour Test/Mid Term": {
-                "MSE": {
-                    "maxMark": "60.0",
-                    "obtained": "42.00",
-                    "classAvg": "42.55",
-                    "percentage": "70.00"
-                }
-            },
-            "Final": {}
-        }
-    ]
+        ],
+        "Linear Algebra": [
+            "3.0",
+            "MATH-222",
+            {
+                "Quiz": [
+                    40.0,
+                    56.08
+                ],
+                "Assignment": [
+                    75.83333333333333,
+                    78.26666666666667
+                ],
+                "One Hour Test/Mid Term": [
+                    70.0,
+                    70.91666666666666
+                ],
+                "Final": [
+                    57.99999999999999,
+                    59.4
+                ]
+            }
+        ]
+    }
 }
