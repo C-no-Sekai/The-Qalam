@@ -2,15 +2,15 @@ from bs4 import BeautifulSoup
 import requests
 import re
 from concurrent.futures import ThreadPoolExecutor
-import threading
+from collections import defaultdict
 
 
 class SupportFunctions:
     def __init__(self):
-        self.url_base, self.url_login, self.url_aggregate, self.url_result = (
+        self.url_base, self.url_login, self.url_teachers, self.url_result = (
             "https://qalam.nust.edu.pk",
             "https://qalam.nust.edu.pk/web/login",
-            "https://qalam.nust.edu.pk/student/dashboard",
+            "https://qalam.nust.edu.pk/student/enrolled/courses",
             "https://qalam.nust.edu.pk/student/results/"
         )
         self.csrf_token = lambda x: x.find("input", {"name": "csrf_token"})["value"]
@@ -74,128 +74,96 @@ class SupportFunctions:
         soup = BeautifulSoup(r.content, "html.parser")
 
         # Get Previous Terms
-        # previous_terms = self.fetch_previous_terms(soup)
-        # print(previous_terms)
+        previous_terms = self.fetch_previous_terms(soup)
 
         # Get Current Term
         cur_subs = soup.find_all('a', {'data-uk-tooltip': '{pos:\'top\'}'})
 
         all_subs = list(map(lambda x: (self.url_base + x.get('href'), session,
-                                  x.find('span', {'class': 'md-list-heading'}).text.strip(),
-                                  x.find_next_sibling("div").find('span', {'class': 'md-list-heading'}).text.strip()
-                                  ), cur_subs))
+                                       x.find('span', {'class': 'md-list-heading'}).text.strip(),
+                                       x.find_next_sibling("div").find('span',
+                                                                       {'class': 'md-list-heading'}).text.strip()
+                                       ), cur_subs))
 
-        print(all_subs)
-
-        # Not working for whatever reason
         with ThreadPoolExecutor() as executor:
             results = executor.map(self.result, list(all_subs))
+        cur_sub_details = list(results)
 
-        for res in results:
-            print(res)
-        # for subject in all_subs:
-        #     soup = BeautifulSoup(session.get(subject[0]).content.decode('utf-8'), features='html.parser')
-        #     temp_score = {}
-        #
-        #     exam_list = soup.find_all('a', class_="js-toggle-children-row")
-        #     for exam in exam_list:
-        #         temp_score[exam.text.strip()] = []
-        #         score_row = exam.find_next('tr')
-        #
-        #         while score_row:
-        #             score_row = score_row.find_next('tr', class_='table-child-row')
-        #             if not score_row or score_row.findChild('th'):
-        #                 break
-        #             temp_score[exam.text.strip()].append(
-        #                 float(re.findall(r"(.*)(?:\s*</td>, '\\n'])", str(score_row.contents))[0].strip()))
-        #
-        #     print(subject[1], subject[2], temp_score)
+        # Get Teacher Names
+        teachers = self.get_teacher_names(session)
 
-    def dashboard(self):
-        r = self.session.get(self.url_aggregate)
-        soup = BeautifulSoup(r.content, "html.parser")
-        data = soup.find_all("div", {
-            "class": ["uk-grid", "uk-grid-width-small-1-12", "uk-grid-width-medium-1-12", "uk-grid-width-medium-1-12",
-                      "uk-grid-width-large-1-4", "uk-margin-medium-bottom"], "data-uk-grid-margin": "",
-            "id": "hierarchical-show", "data-show-delay": "100"})[1].find_all("a")
+        session.close()
 
-        datajson = {}
-        for i in data:
-            datajson[i.find("span", {"class": "md-list-heading md-color-grey-900"}).text] = [
-                self.url_base +
-                re.findall(r'''<a data-uk-tooltip="{pos:'top'}" href="(.*?)" title="Open class">''', i.prettify())[0],
-                i.find("span", {"class": "md-list-heading md-color-blue-grey-600"}).text,
-                i.find("span", {"class": "sub-heading md-color-blue-grey-600"}).text
-            ]
-        return datajson
+    def get_teacher_names(self, session):
+        r = session.get(self.url_teachers)
+        soup = BeautifulSoup(r.text, "html.parser")
 
-    def result(self, inputs):
+        result = {}
+        for img in soup.find_all('img', {'data-uk-tooltip': "{pos:'top'}"}):
+            sub = img.find_parent('div').find_parent('div').find_next_sibling('div').find('span', {
+                'class': 'md-list-heading'}).text.strip()
+            result[sub] = img['title'].lower()
+
+        return result
+
+    @staticmethod
+    def result(inputs):
         url, session, name, course_credits = inputs
 
-        for key, link in links.items():
-            soup = BeautifulSoup(s.get(link).content.decode('utf-8'), features='html.parser')
-            temp_score = {}
+        results = {'name': name,
+                   'credits': course_credits}  # {course_name: credits, quiz, quiz_avg, assign, assign_avg, mid_avg, final, final_avg, lab, lab_avg, project, project_avg}
+        soup = BeautifulSoup(session.get(url).text, features='html.parser')
+        temp_score = defaultdict(list)
+        class_avg = defaultdict(list)
 
-            exam_list = soup.find_all('a', class_="js-toggle-children-row")
-            for exam in exam_list:
-                temp_score[exam.text.strip()] = []
-                score_row = exam.find_next('tr')
+        exam_list = soup.find_all('a', class_="js-toggle-children-row")
+        for exam in exam_list:
+            score_row = exam.find_next('tr')
 
-                while score_row:
-                    score_row = score_row.find_next('tr', class_='table-child-row')
-                    if not score_row or score_row.findChild('th'):
-                        break
-                    temp_score[exam.text.strip()].append(
-                        float(re.findall(r"(.*)(?:\s*</td>, '\\n'])", str(score_row.contents))[0].strip()))
-        r = session.get(url)
-        soup = BeautifulSoup(r.content, "html.parser")
-        table = soup.findAll("table", {"class": "uk-table uk-table-nowrap uk-table-align-vertical table_tree"})
-        if len(table) == 1:
-            table = str(table[0])
-        if len(table) == 2:
-            table = str(table[0]) + str(table[1])
-        table = BeautifulSoup(table, "html.parser")
-        data = {'name': name, 'credits': course_credits}
-        temp = []
-        tempVar = ""
-        for i in table.findAll("tr"):
-            if i.text not in ['\nAssessment Type\nObtained Percentage\n',
-                              '\nAssessment\nMax Mark\nObtained Marks\nClass Average\nPercentage\n']:
-                x = i.text
-                temp.append(" ".join(x.split()))
-        for j in temp:
-            if not re.search(r'\d+(\.\d+)?\s+', j):
-                tempVar = j
-                data[tempVar] = []
-            else:
-                data[tempVar].append(j.split())
+            while score_row:
+                score_row = score_row.find_next('tr', class_='table-child-row')
+                if not score_row or score_row.findChild('th'):
+                    break
 
-        for ke, val in data.items():
-            temp_test = {}
-            for kx in val:
-                while len(kx) > 5:
-                    kx[0] += kx[1]
-                    kx.pop(1)
-                temp_test[kx[0]] = {
-                    "maxMark": kx[1],
-                    "obtained": kx[2],
-                    "classAvg": kx[3],
-                    "percentage": kx[4]
-                }
-            data[ke] = temp_test
-        return data
+                counter = 0
+                for td in score_row.find_all('td'):
+                    if counter == 0 or counter == 2:
+                        pass
+                    elif counter == 1:  # Max Mark
+                        max_marks = float(td.text.strip())
+                    elif counter == 3:  # Class Avg
+                        avg = float(td.text.strip())
+                    elif counter == 4:
+                        score = float(td.text.strip())
+                    counter += 1
 
-    def result_all(self):
-        data = self.dashboard()
-        list_of_urls = []
-        for ke, val in data.items():
-            list_of_urls.append(val[0])
-        with ThreadPoolExecutor() as executor:
-            results = executor.map(self.result, list_of_urls)
-        for i, j in zip(data.values(), results):
-            i.append(j)
-            i.pop(0)
-        return data
+                temp_score[exam.text.strip()].append(score)
+                class_avg[exam.text.strip()].append(round(avg * 100 / max_marks, 2))
+
+                temp_score[exam.text.strip()].append(
+                    float(re.findall(r"(.*)(?:\s*</td>, '\\n'])", str(score_row.contents))[0].strip()))
+
+        for key in temp_score.keys():
+            if 'quiz' in key.lower():
+                results['quiz'] = sum(temp_score[key]) / len(temp_score[key])
+                results['quiz_avg'] = sum(class_avg[key]) / len(class_avg[key])
+            elif 'assignment' in key.lower():
+                results['assign'] = sum(temp_score[key]) / len(temp_score[key])
+                results['assign_avg'] = sum(class_avg[key]) / len(class_avg[key])
+            elif 'mid term' in key.lower() or 'one hour' in key.lower():
+                results['oht'] = sum(temp_score[key]) / len(temp_score[key])
+                results['oht_avg'] = sum(class_avg[key]) / len(class_avg[key])
+            elif 'lab work' in key.lower():
+                results['lab'] = sum(temp_score[key]) / len(temp_score[key])
+                results['lab_avg'] = sum(class_avg[key]) / len(class_avg[key])
+            elif 'lab' in key.lower() or 'project' in key.lower():
+                results['project'] = sum(temp_score[key]) / len(temp_score[key])
+                results['project_avg'] = sum(class_avg[key]) / len(class_avg[key])
+            elif 'final' in key.lower():
+                results['final'] = sum(temp_score[key]) / len(temp_score[key])
+                results['final_avg'] = sum(class_avg[key]) / len(class_avg[key])
+
+        return results
 
 
 if __name__ == '__main__':
