@@ -34,6 +34,3 @@ class DBSetup:
             c.execute(f'UPDATE user_details SET password = "{password}", username = "{username}", class = "{section}" WHERE id = "{login}";')
         c.execute(f'INSERT INTO user_details VALUES ("{login}", "{password}", "{username}", "{section}");')
         conn.commit()
-
-# my_db = DBSetup('my_db.db')
-# print(my_db.exists('abrehman.bscs21seecs', 'K2Cr2O7**'))
