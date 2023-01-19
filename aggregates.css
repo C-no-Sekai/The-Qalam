@@ -1,0 +1,72 @@
+body {
+    background: url("https://wallpapercave.com/wp/wp2771916.jpg") no-repeat center center fixed;
+    background-size: cover;
+}
+.term_selection {
+    background: rgb(0, 0, 0, 0.8);
+    border: none;
+    border-radius: 12px;
+    margin: 5px auto 5px auto;
+    height: max-content;
+    padding: 5px 20px 5px 20px;
+    text-align: center;
+}
+
+.term_element {
+    display: inline-block;
+    list-style: none;
+    color: aliceblue;
+    width: 20vw;
+    padding: 5px 0px 5px 0px;
+}
+
+#grade_table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 100px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.9);
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#grade_table thead tr {
+    background-color:rgb(0, 98, 79, 0.8);
+    color: #ffffff;
+    text-align: left;
+}
+#grade_table th,
+#grade_table td {
+    padding: 12px 15px;
+}
+#grade_table tbody tr {
+    background-color: rgba(238, 247, 244, 0.8);
+    border-bottom: 1px solid #dddddd;
+    text-align: center;
+}
+
+#grade_table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+#grade_table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+#grade_table tbody tr.active-row {
+    font-weight: bold;
+    color: #009879;
+}
+
+.edit_btn {
+    border-radius: 100%;
+    background-color: beige;
+    color: black;
+}
+
+.save_btn {
+    border-radius: 100%;
+    background-color: yellowgreen;
+
+    color: black;
+}
