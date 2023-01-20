@@ -56,3 +56,4 @@ if __name__ == '__main__':
             db.add_subject(program, subject_name.replace('&', 'and'), subjects[1])
         except Exception as e:
             print('[-] Error: ', e, program, subjects)
+

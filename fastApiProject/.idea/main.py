@@ -107,8 +107,8 @@ def add_user(input_data: Validation):
 @app.post("/validate")
 async def starter(input_data: Validation):
     if dbHandler.exists(input_data.login, input_data.password):
-        return {'result': 'success'}
-    return {'result': 'failure'}
+        return {'result': True}
+    return {'result': False}
 
 
 @app.post("/addUser")
@@ -124,5 +124,14 @@ async def starter(input_data: Validation):
 
 @app.post("/getTerms")
 async def starter(input_data: Validation):
-    x = {'terms': dbHandler.fetch_terms(input_data.login)}
-    return x
+    return {'terms': dbHandler.fetch_terms(input_data.login)}
+
+
+@app.get("/")
+async def root():
+    return {"message": "Hello World", "value": False}
+
+
+@app.get("/hello/{name}")
+async def say_hello(name: str):
+    return {"message": f"Hello {name}"}

@@ -1,14 +1,24 @@
-window.onload = () => {get_terms()}
-let get_terms = () => {
+window.onload = () => {
+    let username = sessionStorage.getItem('username');
+    if (username === null) {
+        window.location.href = "index.html"
+    }
+    document.getElementById('username_session').innerHTML = `<h3 class="username_session_name">Welcome ${username}</h3>`;
+    get_terms()
+}
+let get_terms = async function() {
     // Get term List from API
-    // let response = fetch("http://127.0.0.1:8000/",
-    // {
-    //     'method': 'GET',
-    //     'headers': {
-    //     'Content-Type': 'application/json'},
-    // });
-    // terms = response.json();
-    let terms = ['Fall 2021', 'Spring 2021', 'Fall 2022', 'Spring 2022', 'Fall 2023', 'Spring 2023'];
+    let username_fetch_data = {login:sessionStorage.getItem('username')}
+    console.log(sessionStorage.getItem('username'))
+    let response = await fetch("http://127.0.0.1:8000/getTerms",
+    {
+        'method': 'POST',
+        'headers': {
+        'Content-Type': 'application/json'},
+        'body': JSON.stringify(username_fetch_data)
+    });
+    response = await response.json();
+    let terms = response.terms;
     const display_list = document.getElementById('terms');
     new_html = "";
     terms.forEach(element => {
@@ -30,45 +40,15 @@ let update_table = () => {
         }
     }
     // Results From API fetched, now draw table
-    results = fetch("http://example.com/", {
+    results = fetch("http://127.0.0.1:8000/updateTable", {
         'method': 'POST',
         'headers': {
         'Content-Type': 'application/json'},
-    })
-
-    results = [
-        {
-            code: 'HUMA-1200',
-            quiz: 12.5,
-            assignment: 12.5,
-            lab: 10,
-            project: 10,
-            oht: 30,
-            final: 20,
-            aggregate: 25,
-            students: 10,
-            predicted: 'B',
-            drop: 35.5,
-            rise: 12.5,
-            actual: 'B',
-        },
-        {
-            code: 'HUMA-1300',
-            quiz: 12.5,
-            assignment: 12.5,
-            lab: 10,
-            project: 10,
-            oht: 30,
-            final: 20,
-            aggregate: 25,
-            students: 10,
-            predicted: 'B',
-            drop: 35.5,
-            rise: 12.5,
-            actual: 'B',
-        }
-    ]
-
+        'body': JSON.stringify({
+            'term': btns[index].nextSibling.textContent,
+            'login': sessionStorage.getItem('username')
+    })});
+    results = results.json()
     new_html = ""
     results.forEach(subject => {
         new_html += `
