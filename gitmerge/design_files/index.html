@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>NUSTians PENDING</title>
+        <link rel="stylesheet" href="main.css">
+        <link rel="stylesheet" href="index.css">
+        <script src="index.js"></script>
+    </head>
+    
+    <body>
+        <!-- Create the login form -->
+        <div class="login_form">
+            <form id="login_form" onsubmit="return false">
+                <div class="login">
+                    <input id="login" type="text" required="required" placeholder="Login ID" name="login" autofocus="autofocus">
+                </div>
+                <div class="password">
+                    <input id="password" type="password" required="required" placeholder="Password" name="password">
+                </div>
+                <div class="remember_me">
+                    <input id="checkbox" type="checkbox" name="savepass" value="">
+                    <div id="remember_text">Remember password</div>
+                </div>
+                <div id="incorrect_pass" display="none">Entered Username or Password is Incorrect</div>
+                <div class="submit_btn">
+                    <button class="submit_button" type="submit" name="login" onclick="validate()">
+                        <span class="button_text">Log In</span>
+                    </button>
+                </div>
+                <div class="submit_btn" style="padding-top: 12px;" >
+                    <button class="submit_button" type="submit" name="login" onclick="register()">
+                        <span class="button_text">Register</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Create the footer -->
+        <div class="footer">
+            <p>COPYRIGHT 2023 and well bla bla bla </p>
+        </div>
+    </body>
+    <script>
+        document.getElementById("login_form").addEventListener("onsubmit", function(event){
+        event.preventDefault();
+        return false;
+      });
+    </script>
+</html>
