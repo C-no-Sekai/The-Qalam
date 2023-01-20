@@ -4,12 +4,36 @@ from pydantic import BaseModel
 from db_setup import DBSetup
 from support_functions import SupportFunctions
 import threading
+from form_filler import form_filler
 
 
 class Validation(BaseModel):
     login: str = None
     password: str = None
     section: str = None
+
+    class Config:
+        orm_mode = True
+
+
+class SubjectRequest(BaseModel):
+    login: str = None
+    term: str = None
+
+    class Config:
+        orm_mode = True
+
+
+class NewWeights(BaseModel):
+    login: str = None
+    term: str = None
+    subject: str = None
+    quiz_weight: int = None
+    assign_weight: int = None
+    lab_weight: int = None
+    project_weight: int = None
+    midterm_weight: int = None
+    finals_weight: int = None
 
     class Config:
         orm_mode = True
@@ -106,9 +130,10 @@ def add_user(input_data: Validation):
 
 @app.post("/validate")
 async def starter(input_data: Validation):
-    if dbHandler.exists(input_data.login, input_data.password):
-        return {'result': 'success'}
-    return {'result': 'failure'}
+    result = dbHandler.exists(input_data.login, input_data.password)
+    if result:
+        return {'result': "success", 'name': result[0]}
+    return {'result': False}
 
 
 @app.post("/addUser")
@@ -119,10 +144,20 @@ async def starter(input_data: Validation):
 
 @app.post("/fillForms")
 async def starter(input_data: Validation):
-    pass
+    threading.Thread(target=lambda: form_filler(input_data.login, input_data.password)).start()
+    return {'result': 'pending'}
+
+
+@app.post("/getGrades")
+async def starter(input_data: SubjectRequest):
+    return {'grades': dbHandler.fetch_term_result(input_data.login, input_data.term)}
 
 
 @app.post("/getTerms")
 async def starter(input_data: Validation):
-    x = {'terms': dbHandler.fetch_terms(input_data.login)}
-    return x
+    return {'terms': dbHandler.fetch_terms(input_data.login)}
+
+
+@app.post("/editWeightage")
+async def starter(input_data: NewWeights):
+    return {'result': dbHandler.update_and_fetch_new_record(**input_data.dict())}

@@ -43,7 +43,7 @@ if __name__ == '__main__':
     with open('subjects.json', 'r') as f:
         data = json.load(f)
 
-    db = DBSetup('my_db.db')
+    db = DBSetup('new.db')
     for program, subjects in data.items():
         try:
             program = program.strip()
@@ -56,3 +56,4 @@ if __name__ == '__main__':
             db.add_subject(program, subject_name.replace('&', 'and'), subjects[1])
         except Exception as e:
             print('[-] Error: ', e, program, subjects)
+

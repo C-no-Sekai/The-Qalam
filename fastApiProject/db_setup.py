@@ -97,12 +97,13 @@ class DBSetup:
         c = conn.cursor()
         self.initialize_db(c)
         conn.commit()
+        conn.close()
 
     def exists(self, login, password):
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
-        c.execute(f'SELECT * FROM user_details WHERE id = "{login}" AND password = "{password}";')
-        return c.fetchone() is not None
+        c.execute(f'SELECT username FROM user_details WHERE id = "{login}" AND password = "{password}";')
+        return c.fetchone()
 
     def add_user(self, login, password, username, section):
         conn = sqlite3.connect(self.db_path)
@@ -115,6 +116,7 @@ class DBSetup:
         else:
             c.execute(f'INSERT INTO user_details VALUES ("{login}", "{password}", "{username}", "{section}");')
         conn.commit()
+        conn.close()
 
     def add_subject(self, code, subject_name, credits):
         conn = sqlite3.connect(self.db_path)
@@ -126,6 +128,7 @@ class DBSetup:
         else:
             c.execute(f'INSERT INTO subjects VALUES ("{code}", "{subject_name}", "{credits}");')
         conn.commit()
+        conn.close()
 
     def add_subject_term(self, *args):
         conn = sqlite3.connect(self.db_path)
@@ -142,6 +145,7 @@ class DBSetup:
                 c.execute(
                     f'INSERT INTO subject_term (subject, term, teacher) VALUES ("{kwargs["subject"]}", "{kwargs["term"]}", "{kwargs["teacher"]}");')
         conn.commit()
+        conn.close()
 
     def add_weightage(self, *args):
         conn = sqlite3.connect(self.db_path)
@@ -153,7 +157,7 @@ class DBSetup:
             sub_num = c.fetchone()[0]
 
             c.execute(
-                f'SELECT * FROM weightage WHERE subject_number = {sub_num};')
+                f'SELECT * FROM weightage WHERE subject_number = {sub_num} AND id = "{kwargs["id"]}";')
             if c.fetchone() is not None:
                 if 'quiz_weight' in kwargs:
                     c.execute(
@@ -166,6 +170,7 @@ class DBSetup:
                     c.execute(
                         f'INSERT INTO weightage (id, subject_number) VALUES ("{kwargs["id"]}", {sub_num});')
         conn.commit()
+        conn.close()
 
     def add_grade_details(self, *args):
         conn = sqlite3.connect(self.db_path)
@@ -188,6 +193,7 @@ class DBSetup:
                 c.execute(
                     f'INSERT INTO grade_details (subject_id, quiz, assign, midterm, finals, lab, project, grade) VALUES ({sub_id}, {kwargs["quiz"]}, {kwargs["assign"]}, {kwargs["midterm"]}, {kwargs["finals"]}, {kwargs["lab"]}, {kwargs["project"]}, "{kwargs["grade"]}");')
         conn.commit()
+        conn.close()
 
     def add_grade_avg(self, *args):
         conn = sqlite3.connect(self.db_path)
@@ -210,6 +216,9 @@ class DBSetup:
                 c.execute(
                     f'INSERT INTO grade_avg (subject_id, quiz_avg, assign_avg, midterm_avg, finals_avg, lab_avg, project_avg) VALUES ({sub_id}, {kwargs["quiz_avg"]}, {kwargs["assign_avg"]}, {kwargs["midterm_avg"]}, {kwargs["finals_avg"]}, {kwargs["lab_avg"]}, {kwargs["project_avg"]});')
 
+        conn.commit()
+        conn.close()
+
     def add_old_term_record(self, *args):
         conn = sqlite3.connect(self.db_path)
         c = conn.cursor()
@@ -223,13 +232,15 @@ class DBSetup:
             sub_id = c.fetchone()[0]
 
             c.execute(
-                f'SELECT * FROM old_term_record WHERE subject_id = "{sub_id}";')
+                f'SELECT * FROM old_term_record WHERE subject_id = {sub_id};')
             if c.fetchone() is not None:
                 c.execute(
-                    f'UPDATE old_term_record SET aggregate = "{kwargs["aggregate"]}", grade = "{kwargs["grade"]}" WHERE subject_id = "{sub_id}";')
+                    f'UPDATE old_term_record SET aggregate = "{kwargs["aggregate"]}", grade = "{kwargs["grade"]}" WHERE subject_id = {sub_id};')
             else:
                 c.execute(
-                    f'INSERT INTO old_term_record (subject_id, aggregate, grade) VALUES ("{sub_id}", "{kwargs["aggregate"]}", "{kwargs["grade"]}");')
+                    f'INSERT INTO old_term_record (subject_id, aggregate, grade) VALUES ({sub_id}, "{kwargs["aggregate"]}", "{kwargs["grade"]}");')
+        conn.commit()
+        conn.close()
 
     def fetch_subject_codes(self, *args):
         conn = sqlite3.connect(self.db_path)
@@ -269,20 +280,101 @@ class DBSetup:
         response = [i[0].capitalize() for i in c.fetchall()]
 
         conn.close()
+        response.sort(key=lambda x: (int(x.split()[1]), x.split()[0][-1]))
         return response
 
+    def fetch_term_result(self, login_id, term):
+        conn = sqlite3.connect(self.db_path)
+        c = conn.cursor()
+
+        query = f'SELECT weightage.subject_id, weightage.subject_number, subject, quiz_weight, assign_weight, lab_weight, project_weight, midterm_weight, finals_weight FROM subject_term, weightage WHERE term = "{term}" AND id = "{login_id}" ' \
+                f'AND weightage.subject_number = subject_term.subject_number;'
+
+        c.execute(query)
+        part_one = c.fetchall()
+
+        response = [[x[2]] for x in part_one]
+
+        # Count number of students who have taken the subject by counting instances of subject_number in weightage
+        num_students = [
+            c.execute(f'SELECT COUNT(DISTINCT id) FROM weightage WHERE subject_number = {part_one[x][1]};').fetchone()[
+                0] for x in range(len(part_one))]
+        # print(num_students)
+
+        # Check whether term is old term or current term
+        query = f'SELECT * FROM grade_details WHERE subject_id = {part_one[0][0]};'
+        c.execute(query)
+
+        if c.fetchone() is None:  # old term requested
+            for ele, index in zip(response, range(len(response))):
+                ele.extend('------')
+                aggregate, grade = c.execute(
+                    f'SELECT aggregate, grade FROM old_term_record WHERE subject_id = {part_one[index][0]};').fetchone()
+                ele.extend([aggregate, num_students[index], '-', '-', '-', grade])
+        else:  # current term requested
+            for ele, index in zip(response, range(len(response))):
+                ele.extend(part_one[index][3:])
+
+                # Calculate aggregate by fetching the grades of student
+                c.execute(
+                    f'SELECT quiz, assign, lab, project, midterm, finals FROM grade_details WHERE subject_id = {part_one[index][0]};')
+                aggregate = 0
+                for score, weight in zip(c.fetchone(), part_one[index][3:]):
+                    aggregate += score * weight
+                aggregate /= 100
+                ele.extend([round(aggregate, 2), num_students[index], '-', '-', '-', '-'])
+
+        conn.close()
+        return response
+
+    def update_and_fetch_new_record(self, **kwargs):
+        conn = sqlite3.connect(self.db_path)
+        c = conn.cursor()
+
+        # Find subject_number of subject
+        c.execute(
+            f'SELCT subject_term.subject_number, subject_id FROM subject_term, weightage WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND weightage.subject_number = subject_term.subject_number AND id = "{kwargs["id"]}";')
+        sub_num, sub_id = c.fetchone()
+        # Update the weightage table
+        c.execute(
+            f'UPDATE weightage SET quiz_weight = {kwargs["quiz_weight"]}, assign_weight = {kwargs["assign_weight"]}, lab_weight = {kwargs["lab_weight"]}, project_weight = {kwargs["project_weight"]}, midterm_weight = {kwargs["midterm_weight"]}, finals_weight = {kwargs["finals_weight"]} WHERE id = "{kwargs["id"]}" AND subject_number = {sub_num};')
+
+        # Fetch the data to built response
+        response = [kwargs["subject"], kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["lab_weight"],
+                    kwargs["project_weight"], kwargs["midterm_weight"], kwargs["finals_weight"]]
+        # Calculate aggregate by fetching the grades of student
+        c.execute(
+            f'SELECT quiz, assign, lab, project, midterm, finals FROM grade_details WHERE subject_id = {sub_id};')
+        aggregate = 0
+        for score, weight in zip(c.fetchone(), response[1:]):
+            aggregate += score * weight
+        aggregate /= 100
+
+        num_students = c.execute(f'SELECT COUNT(DISTINCT id) FROM weightage WHERE subject_number = {sub_num};').fetchone()[0]
+        response.extend([round(aggregate, 2), num_students, '-', '-', '-', '-'])
+
+        conn.commit()
+        conn.close()
+
+        return response
+
+
 if __name__ == '__main__':
-    # db = DBSetup('my_db.db')
-    # sub = [('object oriented programming', '4.0')]
-    # db.fetch_subject_codes(*sub)
+    db = DBSetup('my_db.db')
 
     conn = sqlite3.connect('my_db.db')
     c = conn.cursor()
-    c.execute(f'DELETE FROM grade_details;')
+    c.execute(f'SELECT * FROM weightage WHERE id = "madeel.bscs21seecs";')
     print(c.fetchall())
-    c.execute(f'DELETE FROM subject_term;')
-    print(c.fetchall())
-    c.execute(f'DELETE FROM weightage;')
-    print(c.fetchall())
-    conn.commit()
-    conn.close()
+
+    # print(db.fetch_term_result('aaleem.bscs21seecs', 'fall 2021'))
+    # print(db.fetch_terms('aaleem.bscs21seecs'))
+    # sub = [('object oriented programming', '4.0')]
+    # db.fetch_subject_codes(*sub)
+
+    # c.execute(f'DELETE FROM subject_term;')
+    # print(c.fetchall())
+    # c.execute(f'DELETE FROM weightage;')
+    # print(c.fetchall())
+    # conn.commit()
+    # conn.close()
