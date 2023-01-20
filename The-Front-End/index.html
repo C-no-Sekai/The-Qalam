@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NUSTians PENDING</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="css/index.css" />
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/master.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 offset-md-3">
+                <div class="card gridcard">
+                    <div class="card-body">
+                        <form id="login_form" onsubmit="return false">
+                            <div class="form-group">
+                                <label for="login">Login ID</label>
+                                <input id="login" type="text" class="form-control" required="required"
+                                    placeholder="Login ID" name="login" autofocus="autofocus" />
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input id="password" type="password" class="form-control" required="required"
+                                    placeholder="Password" name="password" />
+                            </div>
+                            <div class="form-group form-check">
+                                <input id="checkbox" type="checkbox" class="form-check-input" name="savepass"
+                                    value="" />
+                                <label class="form-check-label" for="checkbox">Remember password</label>
+                            </div>
+                            <div id="incorrect_pass" class="text-danger" style="display: none">
+                                Entered Username or Password is Incorrect
+                            </div>
+                            <div class="text-center">
+                                <button class="btn effect01" type="submit" name="login" onclick="validate()">
+                                    Log In
+                                </button>
+                                <button class="btn btn-secondary" type="submit" name="login" onclick="register()">
+                                    Register
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <div class="footer p-3">
+            <p class="justify-content-center h5 " style="color:aliceblue">© 2023 C-no-Sekai </p>
+        </div>
+    </footer>
+</body>
+<script src="js/index.js"></script>
+
+</html>

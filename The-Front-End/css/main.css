@@ -1,0 +1,30 @@
+.footer {
+    position:absolute;
+    bottom:0px;
+    left:0px;
+    background-color: rgb(0, 0, 0, 0.6);
+    color:aliceblue;
+    display:block;
+    width: 100%;
+    padding:0;
+    margin:auto;
+    text-align: center;
+    /* border: solid black;
+    border-radius: 10px; */
+}
+.welcome_message {
+    background: rgb(125, 125, 125, 0.5);
+    color: red;
+    text-align: center;
+    font-size: 5vh;
+    width: max-content;
+    border: solid black;
+    border-radius: 10px;
+    padding: 2px 50px 2px 50px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.gridcard {
+    background-color: rgba(210, 200, 230, 0.7);
+}
