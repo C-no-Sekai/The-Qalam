@@ -1,4 +1,6 @@
 import sqlite3
+from prediction import grade_detail
+import numpy as np
 import os
 
 
@@ -322,7 +324,24 @@ class DBSetup:
                 for score, weight in zip(c.fetchone(), part_one[index][3:]):
                     aggregate += score * weight
                 aggregate /= 100
-                ele.extend([round(aggregate, 2), num_students[index], '-', '-', '-', '-'])
+
+                # Calculate Grade using all students who had the subject
+                c.execute(f'SELECT subject_id FROM weightage WHERE subject_number = {part_one[index][1]};')
+                query = 'SELECT quiz, assign, lab, project, midterm, finals FROM grade_details WHERE subject_id = '
+                for sub_id in c.fetchall():
+                    query += f'{sub_id[0]} OR '
+                query = query[:-4] + ';'
+                c.execute(query)
+                weightage = np.array(part_one[index][3:])
+                data = np.array([np.sum(weightage * np.array(x)) / 100 for x in c.fetchall()])
+                # Find credits
+                c.execute(f'SELECT credits FROM subjects WHERE code = "{part_one[index][2]}";')
+                credit = c.fetchone()[0]
+
+                grade, up, down = grade_detail(credit, ele[0].split('-')[0], aggregate, data)
+                print(data, ele[0].split('-')[0])
+
+                ele.extend([round(aggregate, 2), num_students[index], grade, up, down, '-'])
 
         conn.close()
         return response
@@ -333,11 +352,11 @@ class DBSetup:
 
         # Find subject_number of subject
         c.execute(
-            f'SELCT subject_term.subject_number, subject_id FROM subject_term, weightage WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND weightage.subject_number = subject_term.subject_number AND id = "{kwargs["id"]}";')
+            f'SELECT subject_term.subject_number, subject_id FROM subject_term, weightage WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND weightage.subject_number = subject_term.subject_number AND id = "{kwargs["login"]}";')
         sub_num, sub_id = c.fetchone()
         # Update the weightage table
         c.execute(
-            f'UPDATE weightage SET quiz_weight = {kwargs["quiz_weight"]}, assign_weight = {kwargs["assign_weight"]}, lab_weight = {kwargs["lab_weight"]}, project_weight = {kwargs["project_weight"]}, midterm_weight = {kwargs["midterm_weight"]}, finals_weight = {kwargs["finals_weight"]} WHERE id = "{kwargs["id"]}" AND subject_number = {sub_num};')
+            f'UPDATE weightage SET quiz_weight = {kwargs["quiz_weight"]}, assign_weight = {kwargs["assign_weight"]}, lab_weight = {kwargs["lab_weight"]}, project_weight = {kwargs["project_weight"]}, midterm_weight = {kwargs["midterm_weight"]}, finals_weight = {kwargs["finals_weight"]} WHERE id = "{kwargs["login"]}" AND subject_number = {sub_num};')
 
         # Fetch the data to built response
         response = [kwargs["subject"], kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["lab_weight"],
@@ -351,7 +370,22 @@ class DBSetup:
         aggregate /= 100
 
         num_students = c.execute(f'SELECT COUNT(DISTINCT id) FROM weightage WHERE subject_number = {sub_num};').fetchone()[0]
-        response.extend([round(aggregate, 2), num_students, '-', '-', '-', '-'])
+        # Calculate Grade using all students who had the subject
+        c.execute(f'SELECT subject_id FROM weightage WHERE subject_number = {sub_num};')
+        query = 'SELECT quiz, assign, lab, project, midterm, finals FROM grade_details WHERE subject_id = '
+        for sub_id in c.fetchall():
+            query += f'{sub_id[0]} OR '
+        query = query[:-4] + ';'
+        c.execute(query)
+        weightage = np.array([kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["lab_weight"], kwargs["project_weight"], kwargs["midterm_weight"], kwargs["finals_weight"]])
+        data = np.array([np.sum(weightage * np.array(x)) / 100 for x in c.fetchall()])
+
+        # Find credits
+        c.execute(f'SELECT credits FROM subjects WHERE code = "{kwargs["subject"]}";')
+        credit = c.fetchone()[0]
+
+        grade, up, down = grade_detail(credit, kwargs["subject"].split('-')[0], aggregate, data)
+        response.extend([round(aggregate, 2), num_students, grade, up, down, '-'])
 
         conn.commit()
         conn.close()
