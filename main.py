@@ -44,12 +44,12 @@ class NewWeights(BaseModel):
     login: str = None
     term: str = None
     subject: str = None
-    quiz_weight: int = None
-    assign_weight: int = None
-    lab_weight: int = None
-    project_weight: int = None
-    midterm_weight: int = None
-    finals_weight: int = None
+    quiz_weight: float = None
+    assign_weight: float = None
+    lab_weight: float = None
+    project_weight: float = None
+    midterm_weight: float = None
+    finals_weight: float = None
 
     class Config:
         orm_mode = True

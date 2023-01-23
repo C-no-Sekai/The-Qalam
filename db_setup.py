@@ -157,6 +157,16 @@ class DBSetup:
         c = conn.cursor()
 
         for kwargs in args:
+            # if kwargs["subject"] == "CS-235":
+            #     kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["midterm_weight"], kwargs["finals_weight"], kwargs["lab_weight"], kwargs["project_weight"] = 10, 5, 25, 35, 25, 0
+            # elif kwargs["subject"] == "MATH-222":
+            #     kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["midterm_weight"], kwargs["finals_weight"], kwargs["lab_weight"], kwargs["project_weight"] = 10, 10, 30, 50, 0, 0
+            # elif kwargs["subject"] == "CS-220":
+            #     kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["midterm_weight"], kwargs["finals_weight"], kwargs["lab_weight"], kwargs["project_weight"] = 7.5, 7.5, 22.5, 37.5, 17.5, 7.5
+            # elif kwargs["subject"] == "CS-250":
+            #     kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["midterm_weight"], kwargs["finals_weight"], kwargs["lab_weight"], kwargs["project_weight"] = 7.5, 7.5, 22.5, 30, 25, 7.5
+            # elif kwargs["subject"] == "HU-212":
+            #     kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["midterm_weight"], kwargs["finals_weight"], kwargs["lab_weight"], kwargs["project_weight"] = 10, 10, 30, 50, 0, 0
             c.execute(
                 f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}" AND batch = "{kwargs["batch"]}";')
             sub_num = c.fetchone()[0]
@@ -170,7 +180,7 @@ class DBSetup:
             else:
                 if 'quiz_weight' in kwargs:
                     c.execute(
-                        f'INSERT INTO weightage (id, subject_number, quiz_weight, assign_weight, midterm_weight, final_weight, lab_weight, project_weight) VALUES ("{kwargs["id"]}", {sub_num}, "{kwargs["quiz_weight"]}", "{kwargs["assign_weight"]}", "{kwargs["midterm_weight"]}", "{kwargs["finals_weight"]}", "{kwargs["lab_weight"]}", "{kwargs["project_weight"]}");')
+                        f'INSERT INTO weightage (id, subject_number, quiz_weight, assign_weight, midterm_weight, finals_weight, lab_weight, project_weight) VALUES ("{kwargs["id"]}", {sub_num}, "{kwargs["quiz_weight"]}", "{kwargs["assign_weight"]}", "{kwargs["midterm_weight"]}", "{kwargs["finals_weight"]}", "{kwargs["lab_weight"]}", "{kwargs["project_weight"]}");')
                 else:
                     c.execute(
                         f'INSERT INTO weightage (id, subject_number) VALUES ("{kwargs["id"]}", {sub_num});')
