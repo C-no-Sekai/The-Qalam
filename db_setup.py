@@ -497,10 +497,13 @@ if __name__ == '__main__':
 
     conn = sqlite3.connect('my_db.db')
     c = conn.cursor()
-    c.execute(f'SELECT * FROM weightage;')
-    data = c.fetchall()
-    print(*data, sep='\n')
-    print(len(data))
-
-    db.fetch_image('aaleem.bscs21seecs', 'fall 2021', 'MATH-111')
+    c.execute(f'SELECT code FROM subjects WHERE subject_name = "numerical analysis";')
+    print(list(c.fetchall()))
+    conn.commit()
+    conn.close()
+    # data = c.fetchall()
+    # print(*data, sep='\n')
+    # print(len(data))
+    #
+    # db.fetch_image('aaleem.bscs21seecs', 'fall 2021', 'MATH-111')
 

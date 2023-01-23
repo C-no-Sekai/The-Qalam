@@ -182,9 +182,10 @@ def generate_image(boundaries, label, data):
 
 
 def get_img(ch, subject, data):
-    if subject.split('-')[0] not in subject_map:
-        return None
-    temp = sorted(predict_boundary(ch, subject.split('-')[0], data).items(), key=lambda x: x[1], reverse=True)
+    code = subject.split('-')[0]
+    if code not in subject_map:
+        code = 'CS'
+    temp = sorted(predict_boundary(ch, code, data).items(), key=lambda x: x[1], reverse=True)
     # If boundary for some grade is empty
     boundary = [float(x[1]) for x in temp]
     left_over = all_grades - set(x[0] for x in temp)
@@ -201,7 +202,8 @@ def get_img(ch, subject, data):
 
 def grade_detail(ch, subject, score, data):
     if subject not in subject_map:
-        return '-', '-', '-', '-'
+        subject = 'CS'
+        # return '-', '-', '-', '-'
     temp = sorted(predict_boundary(ch, subject, data).items(), key=lambda x: x[1], reverse=True)
     index = 0
     for k, v in temp:
@@ -210,7 +212,13 @@ def grade_detail(ch, subject, score, data):
             break
         index += 1
 
-    up = round(100 - (stats.norm.cdf((temp[index - 1][1] - score) / sqrt(data.var())) * 100), 2) if grade != 'A' else 0
-    down = round((stats.norm.cdf((temp[index + 1][1] - score) / sqrt(data.var())) * 100), 2) if grade != 'F' else 0
+    try:
+        up = round(100 - (stats.norm.cdf((temp[index - 1][1] - score) / sqrt(data.var())) * 100), 2) if grade != 'A' else 0
+    except ZeroDivisionError:
+        up = 0
+    try:
+        down = round((stats.norm.cdf((temp[index + 1][1] - score) / sqrt(data.var())) * 100), 2) if grade != 'F' else 0
+    except ZeroDivisionError:
+        down = 0
 
     return grade, down, up

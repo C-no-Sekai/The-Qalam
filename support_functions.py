@@ -4,7 +4,6 @@ import re
 from concurrent.futures import ThreadPoolExecutor
 from collections import defaultdict
 
-
 class SupportFunctions:
     def __init__(self):
         self.url_base, self.url_login, self.url_teachers, self.url_result = (
@@ -152,12 +151,10 @@ class SupportFunctions:
                 results['finals'] = sum(temp_score[key]) / len(temp_score[key])
                 results['finals_avg'] = sum(class_avg[key]) / len(class_avg[key])
 
-        if 'lab' not in results:
-            results['lab'] = 0
-            results['lab_avg'] = 0
-        if 'project' not in results:
-            results['project'] = 0
-            results['project_avg'] = 0
+        for k in ['quiz', 'assign', 'midterm', 'lab', 'project', 'finals']:
+            if k not in results.keys():
+                results[k] = 0
+                results[k + '_avg'] = 0
         return results
 
 
