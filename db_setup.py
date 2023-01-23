@@ -2,6 +2,7 @@ import sqlite3
 from prediction import grade_detail, get_img
 import numpy as np
 import smtplib
+import random
 
 
 class DBSetup:
@@ -263,8 +264,17 @@ class DBSetup:
                 code = c.fetchone()
                 if code is None:
                     code = [''.join([x[0] for x in subject[0].split()]).upper()]
+                    new_code = code[0] + "-" + str(random.randint(100, 999))
+                    # Add this code to subject_term table
+                    try:
+                        c.execute(f'INSERT INTO subjects (subject_name, credits, code) VALUES ("{subject[0]}", {subject[1]}, "{new_code}");')
+                    except sqlite3.IntegrityError:
+                        new_code = code[0] + "-" + str(random.randint(100, 999))
+                        c.execute(f'INSERT INTO subjects (subject_name, credits, code) VALUES ("{subject[0]}", {subject[1]}, "{new_code}");')
+                    finally:
+                        code = [new_code]
                 response.append(code[0])
-
+        conn.commit()
         conn.close()
         return response
 
@@ -507,13 +517,15 @@ if __name__ == '__main__':
 
     conn = sqlite3.connect('my_db.db')
     c = conn.cursor()
-    c.execute(f'DROP TABLE user_details;')
-    c.execute(f'DROP TABLE weightage;')
-    c.execute(f'DROP TABLE subject_term;')
-    c.execute(f'DROP TABLE grade_details;')
-    c.execute(f'DROP TABLE grade_avg;')
-    c.execute(f'DROP TABLE old_term_record;')
-    # print(list(c.fetchall()))
+    # c.execute(f'DROP TABLE user_details;')
+    # c.execute(f'DROP TABLE weightage;')
+    # c.execute(f'DROP TABLE subject_term;')
+    # c.execute(f'DROP TABLE grade_details;')
+    # c.execute(f'DROP TABLE grade_avg;')
+    # c.execute(f'DROP TABLE old_term_record;')
+    # c.execute(f'DELETE FROM subjects WHERE code="NM-968";')
+    c.execute(f'SELECT * FROM subjects WHERE subject_name="numerical methods";')
+    print(*c.fetchall(), sep='\n')
     conn.commit()
     conn.close()
     # data = c.fetchall()
