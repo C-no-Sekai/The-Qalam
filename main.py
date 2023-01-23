@@ -34,7 +34,7 @@ class ImageRequest(BaseModel):
 
 
 class Cred(BaseModel):
-    password: str = None
+    password: str
 
     class Config:
         orm_mode = True
@@ -186,4 +186,6 @@ async def starter(input_data: NewWeights):
 
 @app.post("/prepareNextTerm")
 async def starter(input_data: Cred):
-    return {'result': dbHandler.send_features(input_data.password)}
+    threading.Thread(target=lambda: dbHandler.send_features(input_data.password)).start()
+    return {'result': 'pending'}
+
