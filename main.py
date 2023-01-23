@@ -186,6 +186,4 @@ async def starter(input_data: NewWeights):
 
 @app.post("/prepareNextTerm")
 async def starter(input_data: Cred):
-    # Match with a very strong password
-    threading.Thread(target=dbHandler.send_features, args=([input_data.password])).start()
-    return {'result': 'pending'}
+    return {'result': dbHandler.send_features(input_data.password)}
