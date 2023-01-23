@@ -1,5 +1,5 @@
 import sqlite3
-from prediction import grade_detail
+from prediction import grade_detail, get_img
 import numpy as np
 import os
 
@@ -293,7 +293,7 @@ class DBSetup:
                 f'AND weightage.subject_number = subject_term.subject_number;'
 
         c.execute(query)
-        part_one = c.fetchall()
+        part_one = [x for x in c.fetchall() if '-' in x[2]]
 
         response = [[x[2]] for x in part_one]
 
@@ -312,7 +312,23 @@ class DBSetup:
                 ele.extend('------')
                 aggregate, grade = c.execute(
                     f'SELECT aggregate, grade FROM old_term_record WHERE subject_id = {part_one[index][0]};').fetchone()
-                ele.extend([aggregate, num_students[index], '-', '-', '-', grade])
+
+                # Aggregates of other students
+                c.execute(f'SELECT subject_id FROM weightage WHERE subject_number = {part_one[index][1]};')
+                query = f'SELECT aggregate FROM old_term_record WHERE subject_id = '
+                for sub_id in c.fetchall():
+                    query += f'{sub_id[0]} OR subject_id = '
+                query = query[:-17] + ';'
+                c.execute(query)
+
+                data = np.array([x[0] for x in c.fetchall()])
+
+                # Find credits
+                c.execute(f'SELECT credits FROM subjects WHERE code = "{part_one[index][2]}";')
+                credit = c.fetchone()[0]
+
+                grade_pred, down, up = grade_detail(credit, ele[0].split('-')[0], aggregate, data)
+                ele.extend([aggregate, num_students[index], grade_pred, down, up, grade])
         else:  # current term requested
             for ele, index in zip(response, range(len(response))):
                 ele.extend(part_one[index][3:])
@@ -329,8 +345,8 @@ class DBSetup:
                 c.execute(f'SELECT subject_id FROM weightage WHERE subject_number = {part_one[index][1]};')
                 query = 'SELECT quiz, assign, lab, project, midterm, finals FROM grade_details WHERE subject_id = '
                 for sub_id in c.fetchall():
-                    query += f'{sub_id[0]} OR '
-                query = query[:-4] + ';'
+                    query += f'{sub_id[0]} OR subject_id = '
+                query = query[:-17] + ';'
                 c.execute(query)
                 weightage = np.array(part_one[index][3:])
                 data = np.array([np.sum(weightage * np.array(x)) / 100 for x in c.fetchall()])
@@ -338,10 +354,9 @@ class DBSetup:
                 c.execute(f'SELECT credits FROM subjects WHERE code = "{part_one[index][2]}";')
                 credit = c.fetchone()[0]
 
-                grade, up, down = grade_detail(credit, ele[0].split('-')[0], aggregate, data)
-                print(data, ele[0].split('-')[0])
+                grade, down, up = grade_detail(credit, ele[0].split('-')[0], aggregate, data)
 
-                ele.extend([round(aggregate, 2), num_students[index], grade, up, down, '-'])
+                ele.extend([round(aggregate, 2), num_students[index], grade, down, up, '-'])
 
         conn.close()
         return response
@@ -369,28 +384,89 @@ class DBSetup:
             aggregate += score * weight
         aggregate /= 100
 
-        num_students = c.execute(f'SELECT COUNT(DISTINCT id) FROM weightage WHERE subject_number = {sub_num};').fetchone()[0]
+        num_students = \
+            c.execute(f'SELECT COUNT(DISTINCT id) FROM weightage WHERE subject_number = {sub_num};').fetchone()[0]
         # Calculate Grade using all students who had the subject
         c.execute(f'SELECT subject_id FROM weightage WHERE subject_number = {sub_num};')
         query = 'SELECT quiz, assign, lab, project, midterm, finals FROM grade_details WHERE subject_id = '
         for sub_id in c.fetchall():
-            query += f'{sub_id[0]} OR '
-        query = query[:-4] + ';'
+            query += f'{sub_id[0]} OR subject_id = '
+        query = query[:-17] + ';'
         c.execute(query)
-        weightage = np.array([kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["lab_weight"], kwargs["project_weight"], kwargs["midterm_weight"], kwargs["finals_weight"]])
+        weightage = np.array(
+            [kwargs["quiz_weight"], kwargs["assign_weight"], kwargs["lab_weight"], kwargs["project_weight"],
+             kwargs["midterm_weight"], kwargs["finals_weight"]])
         data = np.array([np.sum(weightage * np.array(x)) / 100 for x in c.fetchall()])
 
         # Find credits
         c.execute(f'SELECT credits FROM subjects WHERE code = "{kwargs["subject"]}";')
         credit = c.fetchone()[0]
 
-        grade, up, down = grade_detail(credit, kwargs["subject"].split('-')[0], aggregate, data)
-        response.extend([round(aggregate, 2), num_students, grade, up, down, '-'])
+        grade, down, up = grade_detail(credit, kwargs["subject"].split('-')[0], aggregate, data)
+        response.extend([round(aggregate, 2), num_students, grade, down, up, '-'])
 
         conn.commit()
         conn.close()
 
         return response
+
+    def fetch_image(self, login, term, subject):
+        conn = sqlite3.connect(self.db_path)
+        c = conn.cursor()
+
+        # Find subject_number of subject
+        c.execute(
+            f'SELECT subject_term.subject_number FROM subject_term, weightage WHERE subject = "{subject}" AND term = "{term}" AND id = "{login}" AND weightage.subject_number = subject_term.subject_number;')
+        sub_num = c.fetchone()[0]
+
+        # fetch all subject_id of subject
+        c.execute(f'SELECT subject_id FROM weightage WHERE subject_number = {sub_num};')
+        sub_ids = list(c.fetchall())
+
+        # Check if term is current or previous
+        query = f'SELECT * FROM grade_details WHERE subject_id = {sub_ids[0][0]};'
+        c.execute(query)
+
+        if c.fetchone() is None:  # previous term requested
+            # Fetch the data to built response
+            query = f'SELECT aggregate FROM old_term_record WHERE subject_id = '
+            for sub_id in sub_ids:
+                query += f'{sub_id[0]} OR subject_id = '
+
+            query = query[:-17] + ';'
+            c.execute(query)
+
+            data = np.array([x[0] for x in c.fetchall()])
+
+            # Find credits
+            c.execute(f'SELECT credits FROM subjects WHERE code = "{subject}";')
+            credit = c.fetchone()[0]
+
+            # Get the  image
+            img = get_img(credit, subject, data)
+        else:
+            # Calculate Grade using all students who had the subject
+            query = 'SELECT quiz, assign, lab, project, midterm, finals FROM grade_details WHERE subject_id = '
+            for sub_id in sub_ids:
+                query += f'{sub_id[0]} OR subject_id = '
+            query = query[:-17] + ';'
+            c.execute(query)
+            all_aggregate = c.fetchall()
+
+            # Get weightage
+            c.execute(
+                f'SELECT quiz_weight, assign_weight, lab_weight, project_weight, midterm_weight, finals_weight FROM weightage WHERE subject_number = {sub_num};')
+            weightage = np.array([x for x in c.fetchone()])
+
+            data = np.array([np.sum(weightage * np.array(x)) / 100 for x in all_aggregate])
+            # Find credits
+            c.execute(f'SELECT credits FROM subjects WHERE code = "{subject}";')
+            credit = c.fetchone()[0]
+
+            img = get_img(credit, subject, data)
+
+        conn.close()
+        return img
 
 
 if __name__ == '__main__':
@@ -398,17 +474,10 @@ if __name__ == '__main__':
 
     conn = sqlite3.connect('my_db.db')
     c = conn.cursor()
-    c.execute(f'SELECT * FROM weightage WHERE id = "madeel.bscs21seecs";')
-    print(c.fetchall())
+    c.execute(f'SELECT * FROM weightage;')
+    data = c.fetchall()
+    print(*data, sep='\n')
+    print(len(data))
 
-    # print(db.fetch_term_result('aaleem.bscs21seecs', 'fall 2021'))
-    # print(db.fetch_terms('aaleem.bscs21seecs'))
-    # sub = [('object oriented programming', '4.0')]
-    # db.fetch_subject_codes(*sub)
+    db.fetch_image('aaleem.bscs21seecs', 'fall 2021', 'MATH-111')
 
-    # c.execute(f'DELETE FROM subject_term;')
-    # print(c.fetchall())
-    # c.execute(f'DELETE FROM weightage;')
-    # print(c.fetchall())
-    # conn.commit()
-    # conn.close()

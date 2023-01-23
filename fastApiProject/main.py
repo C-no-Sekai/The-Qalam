@@ -24,6 +24,15 @@ class SubjectRequest(BaseModel):
         orm_mode = True
 
 
+class ImageRequest(BaseModel):
+    login: str = None
+    term: str = None
+    subject: str
+
+    class Config:
+        orm_mode = True
+
+
 class NewWeights(BaseModel):
     login: str = None
     term: str = None
@@ -151,6 +160,11 @@ async def starter(input_data: Validation):
 @app.post("/getGrades")
 async def starter(input_data: SubjectRequest):
     return {'grades': dbHandler.fetch_term_result(input_data.login, input_data.term)}
+
+
+@app.post("/getImage")
+async def starter(input_data: ImageRequest):
+    return {'image': dbHandler.fetch_image(input_data.login, input_data.term, input_data.subject)}
 
 
 @app.post("/getTerms")

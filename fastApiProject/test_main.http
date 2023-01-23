@@ -46,3 +46,13 @@ Content-Type: application/json
 "login": "aaleem.bscs21seecs",
 "term": "fall 2021"
 }
+
+###
+POST 127.0.0.1:8000/getImage
+Content-Type: application/json
+
+{
+"login": "aaleem.bscs21seecs",
+"term": "fall 2021",
+  "subject": "CS-110"
+}

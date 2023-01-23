@@ -41,19 +41,12 @@ class SupportFunctions:
 
             temp = term.find_next_sibling('tr').find_next_sibling('tr')
             while temp and temp.get('class') == ['table-child-row']:
-                counter = 0
-                for record in temp.find_all('td'):
-                    if counter == 0:
-                        course_name = record.text.strip()
-                    elif counter == 1:
-                        course_credits = record.text.strip()
-                    elif counter == 2:
-                        course_aggregate = record.text.strip()
-                    elif counter == 3 or counter == 4:
-                        pass
-                    elif counter == 5:
-                        course_grade = record.text.strip()
-                    counter += 1
+                sub_details = list(temp.find_all('td'))
+                course_name = sub_details[0].text.strip()
+                course_credits = sub_details[1].text.strip()
+                course_aggregate = sub_details[2].text.strip()
+                course_grade = sub_details[5].text.strip()
+
                 term_details.append({course_name: [course_credits, course_aggregate, course_grade]})
                 temp = temp.find_next_sibling('tr')
 
@@ -128,17 +121,10 @@ class SupportFunctions:
                 if not score_row or score_row.findChild('th'):
                     break
 
-                counter = 0
-                for td in score_row.find_all('td'):
-                    if counter == 0 or counter == 2:
-                        pass
-                    elif counter == 1:  # Max Mark
-                        max_marks = float(td.text.strip())
-                    elif counter == 3:  # Class Avg
-                        avg = float(td.text.strip())
-                    elif counter == 4:
-                        score = float(td.text.strip())
-                    counter += 1
+                subject_details = score_row.find_all('td')
+                max_marks = float(subject_details[1].text.strip())
+                avg = float(subject_details[3].text.strip())
+                score = float(subject_details[4].text.strip())
 
                 temp_score[exam.text.strip()].append(score)
                 class_avg[exam.text.strip()].append(round(avg * 100 / max_marks, 2))
