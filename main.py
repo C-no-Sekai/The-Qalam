@@ -104,7 +104,7 @@ def add_user(input_data: Validation):
     # add to subject_term table
     records = []
     for sub, teach in zip(sub_codes, teacher_names):
-        records.append({'subject': sub, 'term': cur_term, 'teacher': teach if teach else 'visiting'})
+        records.append({'subject': sub, 'term': cur_term, 'teacher': teach if teach else 'visiting', 'batch': input_data.login.split('.')[-1]})
     dbHandler.add_subject_term(*records)
     print('[+] Added to subject_term table')
 
@@ -117,7 +117,7 @@ def add_user(input_data: Validation):
             for course_name, detail in rec.items():
                 old_sub.append((course_name.lower().replace('&', 'and'), detail[0]))
                 old_sub_details.append({'term': key, 'aggregate': detail[1], 'grade': detail[2], 'teacher': 'visiting',
-                                        'id': input_data.login})
+                                        'id': input_data.login, 'batch': input_data.login.split('.')[-1]})
 
     old_sub_codes = dbHandler.fetch_subject_codes(*old_sub)
     old_sub_details = [{**details, 'subject': code} for details, code in zip(old_sub_details, old_sub_codes)]

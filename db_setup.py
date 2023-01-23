@@ -11,8 +11,9 @@ class DBSetup:
             (id TEXT PRIMARY KEY, 
             password TEXT NOT NULL,
             username TEXT NOT NULL,
+            batch TEXT NOT NULL,
             class TEXT NOT NULL);
-        ''')
+        ''')  # batch is the .bee part
 
         cur.execute('''
         CREATE TABLE IF NOT EXISTS subjects(
@@ -27,8 +28,9 @@ class DBSetup:
         (subject TEXT REFERENCES subjects(code),
         term TEXT NOT NULL,
         teacher TEXT DEFAULT 'visiting',
+        batch TEXT REFERENCES user_details(batch),
         subject_number INTEGER PRIMARY KEY AUTOINCREMENT,
-        UNIQUE(subject, term, teacher),
+        UNIQUE(subject, term, teacher, batch),
         FOREIGN KEY (subject, term) REFERENCES weightage(subject, term));
         ''')
 
@@ -114,9 +116,9 @@ class DBSetup:
         c.execute(f'SELECT * FROM user_details WHERE id = "{login}";')
         if c.fetchone() is not None:
             c.execute(
-                f'UPDATE user_details SET password = "{password}", username = "{username}", class = "{section}" WHERE id = "{login}";')
+                f'UPDATE user_details SET password = "{password}", username = "{username}", class = "{section}", batch = "{login.split(".")[-1]}" WHERE id = "{login}";')
         else:
-            c.execute(f'INSERT INTO user_details VALUES ("{login}", "{password}", "{username}", "{section}");')
+            c.execute(f'INSERT INTO user_details VALUES ("{login}", "{password}", "{username}", "{login.split(".")[-1]}", "{section}");')
         conn.commit()
         conn.close()
 
@@ -138,14 +140,14 @@ class DBSetup:
 
         for kwargs in args:
             c.execute(
-                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}";')
+                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}" AND batch = "{kwargs["batch"]}";')
             sub_num = c.fetchone()
             if sub_num is not None:
                 c.execute(
-                    f'UPDATE subject_term SET subject = "{kwargs["subject"]}", term = "{kwargs["term"]}", teacher = "{kwargs["teacher"]}" WHERE subject_number = {sub_num[0]};')
+                    f'UPDATE subject_term SET subject = "{kwargs["subject"]}", term = "{kwargs["term"]}", teacher = "{kwargs["teacher"]}", batch = "{kwargs["batch"]}" WHERE subject_number = {sub_num[0]};')
             else:
                 c.execute(
-                    f'INSERT INTO subject_term (subject, term, teacher) VALUES ("{kwargs["subject"]}", "{kwargs["term"]}", "{kwargs["teacher"]}");')
+                    f'INSERT INTO subject_term (subject, term, teacher, batch) VALUES ("{kwargs["subject"]}", "{kwargs["term"]}", "{kwargs["teacher"]}", "{kwargs["batch"]}");')
         conn.commit()
         conn.close()
 
@@ -155,7 +157,7 @@ class DBSetup:
 
         for kwargs in args:
             c.execute(
-                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}";')
+                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}" AND batch = "{kwargs["batch"]}";')
             sub_num = c.fetchone()[0]
 
             c.execute(
@@ -180,7 +182,7 @@ class DBSetup:
 
         for kwargs in args:
             c.execute(
-                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}";')
+                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}" AND batch = "{kwargs["batch"]}";')
             sub_num = c.fetchone()[0]
             c.execute(
                 f'SELECT subject_id FROM weightage WHERE id = "{kwargs["id"]}" AND subject_number = {sub_num};')
@@ -203,7 +205,7 @@ class DBSetup:
 
         for kwargs in args:
             c.execute(
-                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}";')
+                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}" AND batch = "{kwargs["batch"]}";')
             sub_num = c.fetchone()[0]
             c.execute(
                 f'SELECT subject_id FROM weightage WHERE id = "{kwargs["id"]}" AND subject_number = {sub_num};')
@@ -227,7 +229,7 @@ class DBSetup:
 
         for kwargs in args:
             c.execute(
-                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}";')
+                f'SELECT subject_number FROM subject_term WHERE subject = "{kwargs["subject"]}" AND term = "{kwargs["term"]}" AND teacher = "{kwargs["teacher"]}" AND batch = "{kwargs["batch"]}";')
             sub_num = c.fetchone()[0]
             c.execute(
                 f'SELECT subject_id FROM weightage WHERE id = "{kwargs["id"]}" AND subject_number = {sub_num};')
@@ -325,7 +327,11 @@ class DBSetup:
 
                 # Find credits
                 c.execute(f'SELECT credits FROM subjects WHERE code = "{part_one[index][2]}";')
-                credit = c.fetchone()[0]
+                credit = c.fetchone()
+                if credit is None:
+                    credit = 3
+                else:
+                    credit = credit[0]
 
                 grade_pred, down, up = grade_detail(credit, ele[0].split('-')[0], aggregate, data)
                 ele.extend([aggregate, num_students[index], grade_pred, down, up, grade])
@@ -352,7 +358,11 @@ class DBSetup:
                 data = np.array([np.sum(weightage * np.array(x)) / 100 for x in c.fetchall()])
                 # Find credits
                 c.execute(f'SELECT credits FROM subjects WHERE code = "{part_one[index][2]}";')
-                credit = c.fetchone()[0]
+                credit = c.fetchone()
+                if credit is None:
+                    credit = 3
+                else:
+                    credit = credit[0]
 
                 grade, down, up = grade_detail(credit, ele[0].split('-')[0], aggregate, data)
 
@@ -497,8 +507,13 @@ if __name__ == '__main__':
 
     conn = sqlite3.connect('my_db.db')
     c = conn.cursor()
-    c.execute(f'SELECT code FROM subjects WHERE subject_name = "numerical analysis";')
-    print(list(c.fetchall()))
+    c.execute(f'DROP TABLE user_details;')
+    c.execute(f'DROP TABLE weightage;')
+    c.execute(f'DROP TABLE subject_term;')
+    c.execute(f'DROP TABLE grade_details;')
+    c.execute(f'DROP TABLE grade_avg;')
+    c.execute(f'DROP TABLE old_term_record;')
+    # print(list(c.fetchall()))
     conn.commit()
     conn.close()
     # data = c.fetchall()
