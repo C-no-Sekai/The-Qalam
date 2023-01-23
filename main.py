@@ -33,6 +33,13 @@ class ImageRequest(BaseModel):
         orm_mode = True
 
 
+class Cred(BaseModel):
+    password: str = None
+
+    class Config:
+        orm_mode = True
+
+
 class NewWeights(BaseModel):
     login: str = None
     term: str = None
@@ -175,3 +182,10 @@ async def starter(input_data: Validation):
 @app.post("/editWeightage")
 async def starter(input_data: NewWeights):
     return {'result': dbHandler.update_and_fetch_new_record(**input_data.dict())}
+
+
+@app.post("/prepareNextTerm")
+async def starter(input_data: Cred):
+    # Match with a very strong password
+    threading.Thread(target=dbHandler.send_features, args=([input_data.password])).start()
+    return {'result': 'pending'}
