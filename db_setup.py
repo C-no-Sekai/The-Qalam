@@ -383,8 +383,7 @@ class DBSetup:
                     credit = 3
                 else:
                     credit = credit[0]
-                    
-                grade = 'A+' if 'mariamk' in login_id else grade
+
                 grade, down, up = grade_detail(credit, ele[0].split('-')[0], aggregate, data)
 
                 ele.extend([round(aggregate, 2), num_students[index], grade, down, up, '-'])
@@ -534,9 +533,10 @@ if __name__ == '__main__':
     # c.execute(f'DROP TABLE grade_details;')
     # c.execute(f'DROP TABLE grade_avg;')
     # c.execute(f'DROP TABLE old_term_record;')
+    # c.execute(f'DROP TABLE subjects;')
     # c.execute(f'DELETE FROM subjects WHERE code="NM-968";')
-    c.execute(f'SELECT * FROM subjects WHERE subject_name="numerical methods";')
-    print(*c.fetchall(), sep='\n')
+    # c.execute(f'SELECT * FROM subjects WHERE subject_name="numerical methods";')
+    # print(*c.fetchall(), sep='\n')
     conn.commit()
     conn.close()
     # data = c.fetchall()
