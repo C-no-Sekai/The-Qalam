@@ -173,17 +173,19 @@ def grade_detail(ch, subject, score, data):
         subject = 'CS'
         # return '-', '-', '-', '-'
     boundaries = get_boundary(min(data.mean() + 3 * sqrt(data.var()), 89), ch, data.mean(), data)
-
-    mean = data.mean()
-    SB = list(1 if score > x > mean else 0 for x in data).count(1) if score > mean else -list(
-        1 if score < x < mean else 0 for x in data).count(1)
-    SB /= len(data)
-    res = make_prediction(np.array([[score, ch, mean, SB,
-                                     score ** 2, score * ch, score * mean, score * SB,
-                                     ch ** 2, ch * mean, ch * SB,
-                                     mean ** 2, mean * SB,
-                                     SB ** 2]]))[0]
-    grade = np.where(res == np.max(res))[0][0]
+    for index, grade in zip(boundaries[::-1], [0, 1, 2, 3, 4, 5, 6, 7]):
+        if score >= index:
+            break
+    # mean = data.mean()
+    # SB = list(1 if score > x > mean else 0 for x in data).count(1) if score > mean else -list(
+    #     1 if score < x < mean else 0 for x in data).count(1)
+    # SB /= len(data)
+    # res = make_prediction(np.array([[score, ch, mean, SB,
+    #                                  score ** 2, score * ch, score * mean, score * SB,
+    #                                  ch ** 2, ch * mean, ch * SB,
+    #                                  mean ** 2, mean * SB,
+    #                                  SB ** 2]]))[0]
+    # grade = np.where(res == np.max(res))[0][0]
 
     try:
         up = round(100 - (stats.norm.cdf((boundaries[8 - grade] - score) / sqrt(data.var())) * 100),
